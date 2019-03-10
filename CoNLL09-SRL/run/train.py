@@ -15,7 +15,7 @@ import argparse
 if __name__ == "__main__":
     np.random.seed(666)
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('--config_file', default='../configs/default.cfg')
+    argparser.add_argument('--config_file', default='../config.cfg')
     argparser.add_argument('--model', default='BaseParser')
     args, extra_args = argparser.parse_known_args()
     config = Configurable(args.config_file, extra_args)
@@ -47,6 +47,8 @@ if __name__ == "__main__":
         epoch += 1
         for words, lemmas, tags, arcs, rels in \
                 data_loader.get_batches(batch_size=config.train_batch_size, shuffle=True):
+            print words.shape
+            print words
             num = int(words.shape[1] / 2)
             words_ = [words[:, :num], words[:, num:]]
             lemmas_ = [lemmas[:, :num], lemmas[:, num:]]
@@ -59,9 +61,11 @@ if __name__ == "__main__":
                 loss = loss * 0.5
                 loss_value = loss.scalar_value()
                 loss.backward()
-                sys.stdout.write("Step #%d: Acc: rel %.2f, loss %.3f\r\r" %
+                #sys.stdout.write("Step #%d: Acc: rel %.2f, loss %.3f\r\r" %
+                #                 (global_step, rel_accuracy, loss_value))
+                #sys.stdout.flush()
+                print ("Step #%d: Acc: rel %.2f, loss %.3f\r\r" %
                                  (global_step, rel_accuracy, loss_value))
-                sys.stdout.flush()
             update_parameters()
 
             global_step += 1
